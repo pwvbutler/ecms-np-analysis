@@ -15,9 +15,12 @@ def parse_metadata_header(file_obj, sep: str = '\t'):
 
     # parse initial header lines to get section lengths
     for _ in range(3):
-        line = next(file_obj)
-        contents = line.rstrip().split(sep)
-        metadata[contents[0]] = int(contents[-1])
+        try:
+            line = next(file_obj)
+            contents = line.rstrip().split(sep)
+            metadata[contents[0]] = int(contents[-1])
+        except Exception as e:
+            raise ValueError("unable to parse initial lines of tsv file: {}".format(e))
     
     # parse rest of header lines
     for _ in range(metadata["num_header_lines"] - 3):
