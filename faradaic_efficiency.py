@@ -3,7 +3,7 @@ import numpy as np
 
 
 class FaradaicEfficiencyECMS():
-    
+    """"""
     def __init__(
             self,
             ecms_data,
@@ -16,6 +16,7 @@ class FaradaicEfficiencyECMS():
         self.start_time = start_time
         self.step_duration = step_duration
         self.duration_averaged = duration_averaged
+
 
     def _interval_times_from_step_numbers(self, steps):
         """
@@ -30,6 +31,7 @@ class FaradaicEfficiencyECMS():
             for x in steps
         ]
 
+
     def calc_HER_background_current(self, start_time, end_time):
         """
         calculate HER background current as average current between 
@@ -40,12 +42,13 @@ class FaradaicEfficiencyECMS():
         
         return currents.mean()
 
-    def linear_fit_HER_calibration_factor(self, steps, background_current):
+
+    def linear_fit_HER_calibration_factor(self, step_nums, background_current):
         """
         conversion from MS current to cell current by linearly fitting HER current 
         assuming 100% faradaic efficiency.
         """
-        HER_calibration_intervals = self._interval_times_from_step_numbers(steps)
+        HER_calibration_intervals = self._interval_times_from_step_numbers(step_nums)
 
         raw_currents, HER_currents = [], []
 
@@ -68,5 +71,27 @@ class FaradaicEfficiencyECMS():
 
         return m, b
     
+
+    def calculate_CO2RR_faradaic_efficiencies(self, step_nums, fit_coefs, background_current):
+        data6 = []
+
+        m, b = fit_coefs
+
+        CO2RR_intervals = self._interval_times_from_step_numbers(step_nums)
+
+        for interval in CO2RR_intervals:
+            raw_current = self._ecms.grab(item="raw_current", tspan=interval)[1].mean()
+            HER_current = self._ecms.grab(item="M2 [A]", tspan=interval)[1].mean() - background_current
+            
+            HER_cell_current = np.abs(HER_current) * m + b
+            CO2RR_current = np.abs(raw_current) - HER_cell_current
+
+            if CO2RR_current < 0 or  CO2RR_current < background_current:
+                CO2RR_current = 0.00
+                faradaic_efficiency = 0
+            else:
+                faradaic_efficiency = (CO2RR_current / np.abs(raw_current)) * 100
+            
+            data6.append([interval[0], interval[1], raw_current, HER_current, HER_cell_current, CO2RR_current, faradaic_efficiency])
 
 
