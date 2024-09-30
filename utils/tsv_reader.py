@@ -142,6 +142,7 @@ def parse_data_header(file_obj, num_metadata_lines: int, num_data_header_lines: 
     
     return col_names
 
+
 def parse_tsv_data(f, data_start_line: int, col_names: list[str], sep: str = '\t'):
     """
     Read the tsv data

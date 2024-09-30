@@ -3,7 +3,11 @@ import numpy as np
 
 
 class FaradaicEfficiencyECMS():
-    """"""
+    """
+    Performs the required calculations on the ECMS data 
+    to yield Faradaic efficiencies. 
+    """
+    
     def __init__(
             self,
             ecms_data,
@@ -73,6 +77,10 @@ class FaradaicEfficiencyECMS():
     
 
     def calculate_CO2RR_faradaic_efficiencies(self, step_nums, fit_coefs, background_current):
+        """
+        calculate faradaic efficiency for CO2RR as total cell current less HER current, 
+        with the total cell current estimated from the fitting of the HER only steps.
+        """
         data6 = []
 
         m, b = fit_coefs
@@ -88,7 +96,7 @@ class FaradaicEfficiencyECMS():
 
             if CO2RR_current < 0 or  CO2RR_current < background_current:
                 CO2RR_current = 0.00
-                faradaic_efficiency = 0
+                faradaic_efficiency = 0.0
             else:
                 faradaic_efficiency = (CO2RR_current / np.abs(raw_current)) * 100
             
