@@ -12,6 +12,13 @@ Scripts and code for analysing EC-MS data of nanoparticle electrocatalysts
 * pandas
 
 ### Installing
+Clone the repo and change into the base directory:
+
+```
+git clone https://gitlab.com/pwvbutler/ecms_np_analysis.git
+cd ecms_np_analysis
+```
+
 Run the following command in the base directory:
 
 ```
