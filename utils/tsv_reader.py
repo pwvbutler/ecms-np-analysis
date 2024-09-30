@@ -3,7 +3,18 @@ import pandas as pd
 import itertools
 
 
-def parse_metadata_header_from_fpath(fpath: str, sep: str = '\t'):  
+def parse_metadata_header_from_fpath(fpath: str, sep: str = '\t'):
+    """
+    parse tsv metadata header lines using filepath of tsv file
+
+    Args:
+        fpath (str): path to tsv file
+        sep (str): separator character for file, default '\t'
+
+    Returns:
+        metadata (dict): the metadata parsed with fields as keys
+            and the corresponding data as values  
+    """
     with open(fpath) as f:
         metadata = parse_metadata_header(f, sep=sep)
     
@@ -11,6 +22,17 @@ def parse_metadata_header_from_fpath(fpath: str, sep: str = '\t'):
     
 
 def parse_metadata_header(file_obj, sep: str = '\t'):
+    """
+    parse tsv metadata header lines using file handler object
+
+    Args:
+        file_obj: open file object
+        sep (str): separator character for file, default '\t'
+
+    Returns:
+        metadata (dict): the metadata parsed with fields as keys
+            and the corresponding data as values  
+    """
     metadata = {}
 
     # parse initial header lines to get section lengths
@@ -38,14 +60,40 @@ def parse_metadata_header(file_obj, sep: str = '\t'):
 
     return metadata
 
+
 def parse_data_header_from_fpath(fpath: str, num_metadata_lines: int, num_data_header_lines: int, sep: str = '\t'):
+    """
+    parse tsv data header lines using filepath of tsv file
+
+    Args:
+        fpath (str): path to tsv file
+        num_metadata_lines (int): number of metadata header lines
+        num_data_header_lines (int): number of data header lines to parse
+        sep (str): separator character for file, default '\t'
+
+    Returns:
+        col_names (list[str]): Single line names for each column in data section 
+    """
     with open(fpath) as f:
         col_names = parse_data_header(f, num_metadata_lines, num_data_header_lines, sep=sep)
 
     return col_names
 
+
 def parse_data_header(file_obj, num_metadata_lines: int, num_data_header_lines: int, sep: str = '\t'):
-    
+    """
+    parse tsv data header lines using file handler object
+
+    Args:
+        fpath (str): path to tsv file
+        num_metadata_lines (int): number of metadata header lines
+        num_data_header_lines (int): number of data header lines to parse
+        sep (str): separator character for file, default '\t'
+
+    Returns:
+        col_names (list[str]): Single line names for each column in data section 
+    """
+
     if int(num_data_header_lines) != 2:
         raise NotImplementedError("Cannot parse datafile with num data header lines not 2")
 
@@ -94,13 +142,16 @@ def parse_data_header(file_obj, num_metadata_lines: int, num_data_header_lines: 
     
     return col_names
 
-def parse_tsv_data_from_fpath(fpath: str, data_start_line: int, col_names: list[str], sep: str = '\t'):
-    with open(fpath) as f:
-        data = parse_tsv_data(f, data_start_line, col_names, sep=sep)
-
-    return data
-
 def parse_tsv_data(f, data_start_line: int, col_names: list[str], sep: str = '\t'):
+    """
+    Read the tsv data
+
+    Args:
+        f (str, IOString, FileHandler): the tsv file reference
+        data_start_line (int): the line number where the data starts
+        col_names: the names of the columns for the data
+        separator character for file, default '\t'
+    """
     return pd.read_csv(
         f,
         sep=sep,
