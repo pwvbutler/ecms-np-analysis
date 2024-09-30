@@ -6,7 +6,6 @@ with open('requirements.txt') as f:
 setup(
     name='ecms_np_analysis', 
     version='0.1', 
-    packages = find_packages(where="src"),
-    package_dir={"": "src"},
+    packages = find_packages(),
     install_requires=requirements
 )
