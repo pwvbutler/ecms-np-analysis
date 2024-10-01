@@ -48,7 +48,24 @@ class FaradaicEfficiencyECMS():
         return currents.mean()
 
 
-    def linear_fit_HER_calibration_factor(self, step_nums, background_current):
+    def HER_calibration_curve(self, step_nums, ):
+        """
+        calculate the HER calibration factor (in units C/mol) by fitting curve to
+        HER only steps.
+        """
+        HER_calibration_intervals = self._interval_times_from_step_numbers(step_nums)
+
+        cal_result_H2, _ = self._ecms.ecms_calibration_curve(
+            mol="H2",
+            mass="M2",
+            n_el=-2,
+            tspan_list=HER_calibration_intervals,
+            ax="new",
+        )
+        return cal_result_H2.F
+
+
+    def linear_fit_HER_MS_to_cell_current_conversion(self, step_nums, background_current):
         """
         conversion from MS current to cell current by linearly fitting HER current
         assuming 100% faradaic efficiency.
