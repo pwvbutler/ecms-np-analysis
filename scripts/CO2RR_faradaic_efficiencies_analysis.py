@@ -186,18 +186,15 @@ def main():
         duration_averaged=args.time_averaged_over,
     )
 
-    import pdb; pdb.set_trace()
     HER_background = FE_calculator.calc_HER_background_current(
         *args.ms_background_interval
     )
 
-    # import pdb;pdb.set_trace()
     coefs = FE_calculator.linear_fit_HER_MS_to_cell_current_conversion(
         step_nums=args.her_only_steps,
         background_current=HER_background,
     )
 
-    # import pdb; pdb.set_trace()
     data = FE_calculator.calculate_CO2RR_faradaic_efficiencies(
         [x+1 for x in range(ecms.selector._data[-1] + 1)], # all intervals
         coefs,
