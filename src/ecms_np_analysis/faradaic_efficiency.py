@@ -120,11 +120,23 @@ class FaradaicEfficiencyECMS():
             else:
                 faradaic_efficiency = (CO2RR_cell_current / raw_current) * 100
 
-            data.append([interval[0], interval[1], background_MS_current, HER_MS_current, raw_current, HER_cell_current, CO2RR_cell_current, faradaic_efficiency])
+            data.append([
+                interval[0], interval[1],
+                raw_current,
+                HER_MS_current,
+                HER_cell_current,
+                CO2RR_cell_current,
+                faradaic_efficiency
+            ])
 
         return pd.DataFrame(
             data,
-            columns=["start (s)", "end (s)", "MS background current", "HER MS current", "total cell current", "HER cell current", "CO2RR cell current", "Faradaic Efficiency"]
+            columns=[
+                "start (s)", "end (s)",
+                "total cell current (A)",
+                "HER MS current (A)",
+                "HER cell current (A)",
+                "CO2RR cell current (A)",
+                "Faradaic Efficiency (%)"]
         )
-
 
