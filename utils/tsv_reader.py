@@ -13,13 +13,13 @@ def parse_metadata_header_from_fpath(fpath: str, sep: str = '\t'):
 
     Returns:
         metadata (dict): the metadata parsed with fields as keys
-            and the corresponding data as values  
+            and the corresponding data as values
     """
     with open(fpath) as f:
         metadata = parse_metadata_header(f, sep=sep)
-    
+
     return metadata
-    
+
 
 def parse_metadata_header(file_obj, sep: str = '\t'):
     """
@@ -31,7 +31,7 @@ def parse_metadata_header(file_obj, sep: str = '\t'):
 
     Returns:
         metadata (dict): the metadata parsed with fields as keys
-            and the corresponding data as values  
+            and the corresponding data as values
     """
     metadata = {}
 
@@ -43,7 +43,7 @@ def parse_metadata_header(file_obj, sep: str = '\t'):
             metadata[contents[0]] = int(contents[-1])
         except Exception as e:
             raise ValueError("unable to parse initial lines of tsv file: {}".format(e))
-    
+
     # parse rest of header lines
     for _ in range(metadata["num_header_lines"] - 3):
         line = next(file_obj)
@@ -72,7 +72,7 @@ def parse_data_header_from_fpath(fpath: str, num_metadata_lines: int, num_data_h
         sep (str): separator character for file, default '\t'
 
     Returns:
-        col_names (list[str]): Single line names for each column in data section 
+        col_names (list[str]): Single line names for each column in data section
     """
     with open(fpath) as f:
         col_names = parse_data_header(f, num_metadata_lines, num_data_header_lines, sep=sep)
@@ -91,7 +91,7 @@ def parse_data_header(file_obj, num_metadata_lines: int, num_data_header_lines: 
         sep (str): separator character for file, default '\t'
 
     Returns:
-        col_names (list[str]): Single line names for each column in data section 
+        col_names (list[str]): Single line names for each column in data section
     """
 
     if int(num_data_header_lines) != 2:
@@ -118,9 +118,9 @@ def parse_data_header(file_obj, num_metadata_lines: int, num_data_header_lines: 
             col_widths[col_name] = count
             count = 1
             col_name = col
-    
+
     col_widths[col_name] = count
-    
+
     # use widths to create a single row for column names
     for col_name, width in col_widths.items():
         col_names += [ col_name for _ in range(width)]
@@ -139,7 +139,7 @@ def parse_data_header(file_obj, num_metadata_lines: int, num_data_header_lines: 
         # )
 
         col_names[i] = "{} {}".format(col_names[i], content)
-    
+
     return col_names
 
 
