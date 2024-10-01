@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-# import matplotlib.pyplot as plt
 
 
 class FaradaicEfficiencyECMS():
@@ -23,7 +22,7 @@ class FaradaicEfficiencyECMS():
         self.duration_averaged = duration_averaged
 
 
-    def _interval_times_from_step_numbers(self, steps):
+    def interval_times_from_step_numbers(self, steps):
         """
         convert ordinal number of each step to the corresponding time intervals
         required for calculations
@@ -53,7 +52,7 @@ class FaradaicEfficiencyECMS():
         calculate the HER calibration factor (in units C/mol) by fitting curve to
         HER only steps.
         """
-        HER_calibration_intervals = self._interval_times_from_step_numbers(step_nums)
+        HER_calibration_intervals = self.interval_times_from_step_numbers(step_nums)
 
         cal_result_H2, _ = self._ecms.ecms_calibration_curve(
             mol="H2",
@@ -70,7 +69,7 @@ class FaradaicEfficiencyECMS():
         conversion from MS current to cell current by linearly fitting HER current
         assuming 100% faradaic efficiency.
         """
-        HER_calibration_intervals = self._interval_times_from_step_numbers(step_nums)
+        HER_calibration_intervals = self.interval_times_from_step_numbers(step_nums)
 
         raw_currents, HER_currents = [], []
 
@@ -103,7 +102,7 @@ class FaradaicEfficiencyECMS():
 
         m, b = fit_coefs
 
-        CO2RR_intervals = self._interval_times_from_step_numbers(step_nums)
+        CO2RR_intervals = self.interval_times_from_step_numbers(step_nums)
 
         for interval in CO2RR_intervals:
             raw_current = self._ecms.grab(item="raw_current", tspan=interval)[1].mean()
