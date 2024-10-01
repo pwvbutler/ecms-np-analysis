@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 # import matplotlib.pyplot as plt
 
 
@@ -76,12 +77,12 @@ class FaradaicEfficiencyECMS():
         return m, b
     
 
-    def calculate_CO2RR_faradaic_efficiencies(self, step_nums, fit_coefs, background_current):
+    def calculate_CO2RR_faradaic_efficiencies(self, step_nums, fit_coefs, background_MS_current):
         """
         calculate faradaic efficiency for CO2RR as total cell current less HER current, 
         with the total cell current estimated from the fitting of the HER only steps.
         """
-        data6 = []
+        data = []
 
         m, b = fit_coefs
 
@@ -89,17 +90,25 @@ class FaradaicEfficiencyECMS():
 
         for interval in CO2RR_intervals:
             raw_current = self._ecms.grab(item="raw_current", tspan=interval)[1].mean()
-            HER_current = self._ecms.grab(item="M2 [A]", tspan=interval)[1].mean() - background_current
+            HER_MS_current = self._ecms.grab(item="M2 [A]", tspan=interval)[1].mean() - background_MS_current
             
-            HER_cell_current = np.abs(HER_current) * m + b
-            CO2RR_current = np.abs(raw_current) - HER_cell_current
+            HER_cell_current = HER_MS_current * m + b
+            CO2RR_cell_current = raw_current - HER_cell_current
 
-            if CO2RR_current < 0 or  CO2RR_current < background_current:
-                CO2RR_current = 0.00
+            if (
+                HER_MS_current < background_MS_current or 
+                np.isclose(HER_MS_current, background_MS_current, rtol=0.10, atol=1e-14)
+            ):
+                CO2RR_cell_current = 0.00
                 faradaic_efficiency = 0.0
             else:
-                faradaic_efficiency = (CO2RR_current / np.abs(raw_current)) * 100
+                faradaic_efficiency = (CO2RR_cell_current / raw_current) * 100
             
-            data6.append([interval[0], interval[1], raw_current, HER_current, HER_cell_current, CO2RR_current, faradaic_efficiency])
+            data.append([interval[0], interval[1], background_MS_current, HER_MS_current, raw_current, HER_cell_current, CO2RR_cell_current, faradaic_efficiency])
+    
+        return pd.DataFrame(
+            data, 
+            columns=["start (s)", "end (s)", "MS background current", "HER MS current", "total cell current", "HER cell current", "CO2RR cell current", "Faradaic Efficiency"]
+        )
 
 
