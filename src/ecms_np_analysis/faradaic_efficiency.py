@@ -35,19 +35,22 @@ class FaradaicEfficiencyECMS():
             for x in steps
         ]
 
-
-    def calc_HER_background_current(self, start_time, end_time):
+    def calc_HER_background_current(self, step_nums):
         """
         calculate HER background current as average current between
         start and end times.
         """
-        tspan = (start_time, end_time)
-        _, currents = self._ecms.grab(item="M2 [A]", tspan=tspan)
+        intervals = self.interval_times_from_step_numbers(step_nums)
+        currents = []
+        for interval in intervals:
+            currents.append(self._ecms.grab(item="M2 [A]", tspan=interval)[1].mean())
 
-        return currents.mean()
+        return np.array(currents).mean()
 
 
-    def HER_calibration_curve(self, step_nums, ):
+
+
+    def HER_calibration_curve(self, step_nums):
         """
         calculate the HER calibration factor (in units C/mol) by fitting curve to
         HER only steps.
