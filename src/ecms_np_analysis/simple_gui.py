@@ -223,10 +223,10 @@ with col2:
 
 col1, col2 = st.columns(2)
 ecms_ca_fig = ecms_cp_fig = None
-name = ms_datafile.name[:-4]
 
 with col1:
     if st.button("process data") and validate_form():
+            name = ms_datafile.name[:-4]
             st.write(HER_background_current)
             ms = get_ms_data(ms_datafile)
             ec_cp = get_ec_data(ec_cp_datafile) if ec_cp_datafile is not None else None
