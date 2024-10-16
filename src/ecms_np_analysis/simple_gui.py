@@ -235,7 +235,7 @@ with col1:
             if ec_cp is not None:
                 ecms_cp = ec_cp + ms
                 ecms_cp["raw_potential"]._data = ecms_cp["<Ewe/V>"]._data # quick fix: for some reason raw_potential is not correct
-                #ecms_cp.tstamp += ecms_cp.t[0] - 1
+                ecms_cp.tstamp += ecms_cp.t[0] - 1
 
                 ecms_cp_fig, ecms_cp_axes = plot_ecms_data(ecms_cp, name + " CP")
                 # st.write(ecms_cp_fig)
@@ -246,7 +246,7 @@ with col1:
             if ec_ca is not None:
                 ecms_ca = ec_ca + ms
                 ecms_ca["raw_potential"]._data = ecms_ca["Ewe/V"]._data
-                #ecms_ca.tstamp += ecms_ca.t[0] - 1
+                ecms_ca.tstamp += ecms_ca.t[0] - 1
 
                 ecms_ca_fig, ecms_ca_axes = plot_ecms_data(ecms_ca, name + " CA")
                 # st.write(ecms_ca_fig)
