@@ -251,9 +251,8 @@ with col1:
                 ecms_ca.tstamp += ecms_ca.t[0] - 1
 
                 ecms_ca_fig, ecms_ca_axes = plot_ecms_data(ecms_ca, name + " CA")
-                # st.write(ecms_ca_fig)
 
-                ecms_ca_data = calc_faradaic_efficiencies(ecms_cp)
+                ecms_ca_data = calc_faradaic_efficiencies(ecms_ca)
             
             st.session_state["data_processed"] = True
 
