@@ -6,8 +6,7 @@ from faradaic_efficiency import FaradaicEfficiencyECMS
 import zipfile
 import io
 import tempfile
-import datetime
-st.write(datetime.datetime.now().astimezone().tzname())
+
 
 ##############################################
 ################# FUNCTIONS ##################
@@ -103,7 +102,6 @@ def plot_ecms_data(ecms, name, **kwargs):
     return fig, axes
 
 
-
 # @st.cache_data
 def calc_faradaic_efficiencies(
     ecms,
@@ -162,24 +160,21 @@ st.sidebar.markdown(
     "- Step numbers start from 1 and should be given as a space separated list (e.g. 1 2 3)"
 )
 
-st.sidebar.markdown(
-    "Plotting Options:"
-)
 
-plot_width = st.sidebar.slider(
-    "plot width", 1, 14, 7, key="plot_width",
-)
-plot_height = st.sidebar.slider(
-    "plot height", 1, 14, 8, key="plot_height",
-)
+with st.sidebar.expander("Plot Options"):
+    plot_width = st.slider(
+        "plot width", 1, 14, 7, key="plot_width",
+    )
+    plot_height = st.slider(
+        "plot height", 1, 14, 8, key="plot_height",
+    )
+    legend_x = st.slider(
+        "legend horizontal", -0.5, 1.5, 1.05, key="legend_x",
+    )
 
-legend_x = st.sidebar.slider(
-    "legend x", -0.5, 1.5, 1.05, key="legend_x",
-)
-
-legend_y = st.sidebar.slider(
-    "legend y", -0.5, 1.5, 0.50, key="legend_y",
-)
+    legend_y = st.slider(
+        "legend vertical", -0.5, 1.5, 0.50, key="legend_y",
+    )
 
 
 
@@ -200,9 +195,7 @@ with col1:
         # accept_multiple_files=True,
         key="ec_cp_datafile",
     )
-    HER_background_current = st.text_input("HER_background_current", value="", key="HER_background_current")
-    HER_only_steps = st.text_input("HER only step numbers", key="HER_only_steps")
-    average_over_duration = st.text_input("duration average signal over (s)", value=100, key="duration_averaged")
+    
     
 
 with col2:
@@ -211,11 +204,20 @@ with col2:
         # accept_multiple_files=True,
         key="ec_ca_datafile",
     )
-    # HER_background_type = st.selectbox("", ("step numbers", "current",), index=0, key="HER_background_type")
-    HER_background_steps = st.text_input("HER_background_steps", key="HER_background_steps")
-    step_duration = st.text_input("step duration", value=300, key="step_duration")
-    start_time = st.text_input("Sequence start time (s)", value=0, key="start_time")
 
+with st.expander("More Options"):
+    col1, col2 = st.columns(2)
+    with col1:
+        HER_background_current = st.text_input("HER_background_current", value="", key="HER_background_current")
+        HER_only_steps = st.text_input("HER only step numbers", value="2 3 4", key="HER_only_steps")
+        average_over_duration = st.text_input("duration average signal over (s)", value=100, key="duration_averaged")
+        Ag_AgCl_pH = st.text_input("Ag/AgCl RE pH", value=6.8, key="Ag_AgCl_pH")
+        ohmic_drop = st.text_input("Ohmic Drop", value=0.0, key="ohmic_drop")
+    with col2:
+        HER_background_steps = st.text_input("HER_background_steps", value="1", key="HER_background_steps")
+        step_duration = st.text_input("step duration", value=300, key="step_duration")
+        start_time = st.text_input("Sequence start time (s)", value=0, key="start_time")
+        electrode_area = st.text_input("Electrode Area", value=0.196, key="electrode_area")
 
 
 ##############################################
@@ -224,6 +226,7 @@ with col2:
 
 col1, col2 = st.columns(2)
 ecms_ca_fig = ecms_cp_fig = None
+
 
 with col1:
     if st.button("process data") and validate_form():
@@ -234,13 +237,12 @@ with col1:
             ec_ca = get_ec_data(ec_ca_datafile) if ec_ca_datafile is not None else None
 
             if ec_cp is not None:
-                if datetime.datetime.now().astimezone().tzname() == "UTC":
-                    ec_cp["time/s"]._data -= 7200
                 ecms_cp = ec_cp + ms
                 ecms_cp["raw_potential"]._data = ecms_cp["<Ewe/V>"]._data # quick fix: for some reason raw_potential is not correct
                 ecms_cp.tstamp += ecms_cp.t[0] - 1
 
                 ecms_cp_fig, ecms_cp_axes = plot_ecms_data(ecms_cp, name + " CP")
+                # st.write(ecms_cp_fig)
 
                 ecms_cp_data = calc_faradaic_efficiencies(ecms_cp)
 
@@ -251,6 +253,7 @@ with col1:
                 ecms_ca.tstamp += ecms_ca.t[0] - 1
 
                 ecms_ca_fig, ecms_ca_axes = plot_ecms_data(ecms_ca, name + " CA")
+                # st.write(ecms_ca_fig)
 
                 ecms_ca_data = calc_faradaic_efficiencies(ecms_ca)
             
@@ -293,7 +296,7 @@ tab1, tab2 = st.tabs(["ECMS CP Results", "ECMS CA Results"],)
 with tab1:
     if ecms_cp_fig is not None:
         st.write(ecms_cp_fig)
-        st.dataframe(ecms_cp_data)
+        st.dataframe(ecms_cp_data.style.format("{:.4g}"))
     else:
         st.write("upload CP data and press process")
 
@@ -318,92 +321,4 @@ with tab2:
 
 
 
-
-
-
-
-
-
-# st.markdown(
-#     "### EC-MS Data Plotter"
-# )
-
-# col1, col2 = st.columns(2)
-
-
-
-
-# with col1:
-
-#     # tsv_file = st.file_uploader(
-#     #     "tsv file",
-#     # )
-#     # if tsv_file is not None:
-#     #     st.write("tsv_file:", dir(tsv_file))
-
-#     # if st.button("browse"):
-#     #     dialog = wx.DirDialog(None, "Select a folder:", style=wx.DD_DEFAULT_STYLE | wx.DD_NEW_DIR_BUTTON)
-#     #     if dialog.ShowModal() == wx.ID_OK:
-#     #         tsv_filepath = dialog.GetPath() # folder_path will contain the path of the folder you have selected as string
-#     tsv_filepath = st.text_input(
-#         "tsv absolute filepath",
-#         label_visibility="collapsed",
-#         placeholder="tsv filepath",
-#     )
-#     expt_dir = st.text_input(
-#         "expt folder",
-#         label_visibility="collapsed",
-#         placeholder="expt folder",
-#     )
-#     expt_prefix = st.text_input(
-#         "expt prefix",
-#         label_visibility="collapsed",
-#         placeholder="expt prefix",
-#     )
-#     save_dir = st.text_input(
-#         "save",
-#         label_visibility="collapsed",
-#         placeholder="save plot folder",
-#     )
-
-# with col2:
-#     width = st.slider(
-#         "width", 1, 14, 7,
-#     )
-#     height = st.slider(
-#         "height", 1, 14, 5,
-#     )
-# # st.write(tsv_filepath == "")
-# if not os.path.isfile(tsv_filepath):
-#     st.write("tsv filepath required")
-# elif not os.path.isdir(expt_dir):
-#     st.write("expt folder required")
-# else:
-#     tsv_file_name=os.path.basename(tsv_filepath)[:-4]
-#     fig, ecms = process_data(
-#         tsv_filepath,
-#         os.path.join(expt_dir, expt_prefix),
-#         # save_dir,
-#     )
-
-#     fig.set_size_inches(width, height, forward=True)
-#     st.write(fig)
-
-
-# if st.sidebar.button("save results"):
-#     if save_dir is None:
-#         st.warning("save folder required")
-    
-#     try:
-#         fig.savefig(
-#             os.path.join(save_dir, tsv_file_name + '.png'), 
-#             dpi=300,
-#         )
-#         ecms.export(
-#             os.path.join(save_dir, tsv_file_name + "_calibration.csv"), 
-#             time_step=1
-#         )
-
-#     except Exception as e:
-#         st.warning("unable to save results: ", e)
 
