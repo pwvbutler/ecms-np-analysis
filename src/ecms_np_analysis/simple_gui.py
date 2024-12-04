@@ -6,7 +6,8 @@ from faradaic_efficiency import FaradaicEfficiencyECMS
 import zipfile
 import io
 import tempfile
-
+import datetime
+st.write(datetime.datetime.now().astimezone().tzname())
 
 ##############################################
 ################# FUNCTIONS ##################
@@ -237,6 +238,8 @@ with col1:
             ec_ca = get_ec_data(ec_ca_datafile) if ec_ca_datafile is not None else None
 
             if ec_cp is not None:
+                if datetime.datetime.now().astimezone().tzname() == "UTC":
+                    ec_cp["time/s"]._data -= 7200
                 ecms_cp = ec_cp + ms
                 ecms_cp["raw_potential"]._data = ecms_cp["<Ewe/V>"]._data # quick fix: for some reason raw_potential is not correct
                 ecms_cp.tstamp += ecms_cp.t[0] - 1
@@ -248,6 +251,8 @@ with col1:
 
 
             if ec_ca is not None:
+                if datetime.datetime.now().astimezone().tzname() == "UTC":
+                    ec_ca["time/s"]._data -= 7200
                 ecms_ca = ec_ca + ms
                 ecms_ca["raw_potential"]._data = ecms_ca["Ewe/V"]._data
                 ecms_ca.tstamp += ecms_ca.t[0] - 1
