@@ -83,9 +83,6 @@ class FaradaicEfficiencyECMS():
             HER_currents.append(
                 self._ecms.grab(item="M2 [A]", tspan=interval)[1].mean(),
             )
-
-        print(f"raw_currents: {raw_currents}")
-        print(f"HER currents: {HER_currents}")
         
         raw_currents = np.array(raw_currents)
         HER_currents = np.array(HER_currents) - background_current
