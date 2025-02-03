@@ -1,4 +1,4 @@
-streamlit
-pandas
-ixdat
+streamlit==1.38.0
+pandas==2.2.2
+ixdat==0.2.12 
 
