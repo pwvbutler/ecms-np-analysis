@@ -22,7 +22,7 @@ cd ecms_np_analysis
 Run the following command in the base directory:
 
 ```
-python -m pip install 
+python -m pip install .
 ```
 
 alternatively, create a virtual environment beforehand and install there
@@ -31,12 +31,12 @@ Mac/linux:
 ```
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install 
+python -m pip install .
 ```
 
 Windows:
 ```
 python -m venv .venv
 .venv\Scripts\activate
-python -m pip install 
+python -m pip install .
 ```
