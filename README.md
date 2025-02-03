@@ -1,6 +1,6 @@
 # ECMS NP Analysis
 
-Scripts and code for analysing EC-MS data of nanoparticle electrocatalysts
+Scripts and code for analysing EC-MS data of nanoparticle electrocatalysts and calculating faradaic efficiencies
 
 
 ## Getting Started
