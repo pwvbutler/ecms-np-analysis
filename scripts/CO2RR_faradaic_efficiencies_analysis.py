@@ -68,11 +68,11 @@ def main():
 
     parser.add_argument(
         "-bg",
-        "--ms-background-interval",
-        type=float,
-        nargs=2,
+        "--ms-background-step",
+        type=int,
+        nargs="+",
         required=True,
-        help="start and end time for calculating HER MS background current",
+        help="step for calculating HER MS background current (steps start from 1)",
     )
 
     parser.add_argument(
@@ -98,6 +98,14 @@ def main():
         default=None,
         help="pH of Ag/AgCl reference electrode",
     )
+    
+    parser.add_argument(
+        "-ca",
+        "--ca",
+        action="store_true",
+        default=False,
+        help="data is from CA experiment instead of CP",
+    )
 
     args = parser.parse_args()
 
@@ -117,8 +125,13 @@ def main():
     )
 
     ecms = ec + ms
-    # ecms["raw_potential"]._data = ecms["Ewe/V"]._data # fix for raw_potential being always 0 (not read correctly) 
-    ecms["raw_potential"]._data = ecms["<Ewe/V>"]._data
+    
+    # fix for raw_potential being always 0 (not read correctly) 
+    if not args.ca:
+        ecms["raw_potential"]._data = ecms["<Ewe/V>"]._data
+    else:
+        ecms["raw_potential"]._data = ecms["Ewe/V"]._data
+        
     ecms.t[0]
     ecms.tstamp += ecms.t[0] - 1
 
@@ -187,7 +200,7 @@ def main():
     )
 
     HER_background = FE_calculator.calc_HER_background_current(
-        *args.ms_background_interval
+        args.ms_background_step
     )
 
     coefs = FE_calculator.linear_fit_HER_MS_to_cell_current_conversion(
