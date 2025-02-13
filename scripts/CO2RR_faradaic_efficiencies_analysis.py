@@ -1,34 +1,10 @@
-from ecms_np_analysis import FaradaicEfficiencyECMS
+from ecms_np_analysis import FaradaicEfficiencyECMS, MASS_TO_SPECIES_PLOT
 from ixdat import Measurement
 import os
 
 RE_VS_RHE=0.0
 ELECTRODE_AREA=0.196
 OHMIC_DROP=0.0
-
-MASS_TO_SPECIES_PLOT = {
-    "M2": "H$_{2}$",
-    "M4": "He",
-    "M15": "CH$_{4}$",
-    "M18": "H$_{2}$O",
-    "M26": "C$_{2}$H$_{2}$",
-    "M28": "CO/N$_{2}$",
-    "M32": "O$_{2}$",
-    "M40": "Ar",
-    "M44": "CO$_{2}$",
-}
-
-MASS_TO_SPECIES = {
-    "M2": "H2",
-    "M4": "He",
-    "M15": "CH4",
-    "M18": "H2O",
-    "M26": "C2H2",
-    "M28": "CO/N2",
-    "M32": "O2",
-    "M40": "Ar",
-    "M44": "CO2",
-}
 
 def main():
     import argparse
